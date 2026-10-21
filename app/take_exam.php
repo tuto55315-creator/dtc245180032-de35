@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 $conn = new mysqli('mysql_db', 'quiz_user', 'SecureQuizPassword456!', 'quiz_db');
 if ($conn->connect_error) { die("Lỗi kết nối CSDL"); }
@@ -64,3 +65,7 @@ while ($row = $questions_result->fetch_assoc()) {
 </div>
 </body>
 </html>
+<?php 
+// Đẩy nội dung bộ đệm ra trình duyệt kết thúc phiên
+ob_end_flush(); 
+?>
