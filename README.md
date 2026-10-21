@@ -1,0 +1,46 @@
+1. Giới thiệu dự án
+
+Dự án Hệ thống Quiz / Thi trắc nghiệm triển khai ứng dụng thi trắc nghiệm trực tuyến bằng Docker Compose trên Ubuntu, tích hợp ứng dụng Web, MySQL, phpMyAdmin, Nginx Reverse Proxy, Prometheus, Grafana, Loki và Promtail.
+
+2. Công nghệ sử dụng
+
+* **Docker và Docker Compose:** Quản lý các container.
+* **Web Application:** Giao diện ứng dụng thi trắc nghiệm trực tuyến (tạo đề, kho đề thi, đảo câu hỏi/đáp án, làm lại câu sai).
+* **MySQL:** Lưu trữ dữ liệu.
+* **phpMyAdmin:** Quản trị cơ sở dữ liệu.
+* **Nginx:** Reverse Proxy cho ứng dụng Web.
+* **Prometheus:** Thu thập metrics.
+* **Grafana:** Hiển thị dashboard giám sát.
+* **Loki:** Lưu trữ và truy vấn log.
+* **Promtail:** Thu thập và chuyển log tới Loki.
+
+3. Cấu trúc thư mục
+
+```text
+dtc245180032-de35/
+├── app/
+├── nginx/
+├── prometheus/
+├── promtail/
+└── docker-compose.yml
+
+Bước 1: Tải mã nguồn
+
+git clone [https://github.com/dtc245180032-creator/dtc245180032-de35.git](https://github.com/dtc245180032-creator/dtc245Bước 1: Tải mã nguồn
+git clone [https://github.com/dtc245180032-creator/dtc245180032-de35.git](https://github.com/dtc245180032-creator/dtc245180032-de35.git)
+cd dtc245180032-de35
+
+Bước 2: Kiểm tra cấu hình
+docker compose config
+
+Bước 3: Khởi chạy hệ thống
+docker compose up -d --build
+
+Bước 4: Kiểm tra container
+docker compose ps
+
+Bước 5: Kiểm tra log
+docker compose logs --tail=100
+
+Bước 6: Dừng hệ thống
+docker compose down
