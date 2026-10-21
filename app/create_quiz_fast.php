@@ -1,4 +1,10 @@
 <?php
+ob_start();
+session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
+    die("<div style='font-family:sans-serif; text-align:center; margin-top:50px;'><h2>⛔ Truy cập bị từ chối!</h2><p>Chỉ có tài khoản <b>Giáo viên</b> mới có quyền soạn đề thi.</p><a href='quiz_bank.php'>Quay lại Kho Đề Thi</a></div>");
+}
+
 $conn = new mysqli('mysql_db', 'quiz_user', 'SecureQuizPassword456!', 'quiz_db');
 
 $msg = "";
@@ -8,13 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $duration = (int)$_POST['duration'];
     $raw_text = $_POST['raw_text'];
 
-    // Lưu Đề Thi
     $stmt = $conn->prepare("INSERT INTO exams (title, subject, duration_minutes, shuffle_questions, shuffle_answers) VALUES (?, ?, ?, 1, 1)");
     $stmt->bind_param("ssi", $title, $subject, $duration);
     $stmt->execute();
     $exam_id = $stmt->insert_id;
 
-    // Phân tích văn bản Azota đơn giản
     $questions = explode("Câu ", $raw_text);
     $count = 0;
 
@@ -56,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-light">
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>✏️ Trình Soạn Đề Thi Nhanh (Kiểu Azota)</h2>
+        <h2>✏️ Trình Soạn Đề Thi Nhanh (Kiểu Azota) - Giáo viên</h2>
         <a href="quiz_bank.php" class="btn btn-secondary">Xem Kho Đề Thi</a>
     </div>
 
@@ -96,3 +100,4 @@ D. Đáp án D
 </div>
 </body>
 </html>
+<?php ob_end_flush(); ?>

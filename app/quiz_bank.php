@@ -1,11 +1,19 @@
 <?php
+ob_start();
+session_start();
+if (!isset($_SESSION['role'])) {
+    header("Location: login.php");
+    exit();
+}
+
 $conn = new mysqli('mysql_db', 'quiz_user', 'SecureQuizPassword456!', 'quiz_db');
 if ($conn->connect_error) { die("Lỗi kết nối CSDL"); }
 
 $msg = "";
+$role = $_SESSION['role'];
 
-// Xử lý tự động thêm đề cương mẫu khi người dùng bấm nút
-if (isset($_GET['import_sample'])) {
+// Xử lý tự động thêm đề cương mẫu (Chỉ dành cho Giáo viên)
+if (isset($_GET['import_sample']) && $role == 'teacher') {
     $type = $_GET['import_sample'];
     
     if ($type == 'toan') {
@@ -90,10 +98,18 @@ $result = $conn->query($sql);
 <body class="bg-light">
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>📚 Kho Đề Thi & Thống Kê Lượt Làm Bài</h2>
+        <div>
+            <h2>📚 Kho Đề Thi & Thống Kê Lượt Làm Bài</h2>
+            <span class="text-muted">Xin chào: <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong> 
+                (Vai trò: <span class="badge bg-<?php echo ($role == 'teacher') ? 'danger' : 'success'; ?>"><?php echo ($role == 'teacher') ? 'Giáo viên' : 'Học sinh'; ?></span>)
+            </span>
+        </div>
         <div>
             <a href="index.php" class="btn btn-secondary">Trang Chủ</a>
-            <a href="create_quiz_fast.php" class="btn btn-success">+ Soạn Đề Nhanh (Azota)</a>
+            <?php if ($role == 'teacher'): ?>
+                <a href="create_quiz_fast.php" class="btn btn-success">+ Soạn Đề Nhanh (Azota)</a>
+            <?php endif; ?>
+            <a href="logout.php" class="btn btn-outline-danger">Đăng Xuất</a>
         </div>
     </div>
 
@@ -104,10 +120,11 @@ $result = $conn->query($sql);
         </div>
     <?php endif; ?>
 
-    <!-- Khối chọn nhanh đề cương ôn tập có sẵn -->
+    <!-- Khối chọn nhanh đề cương ôn tập có sẵn (Chỉ hiển thị cho Giáo viên) -->
+    <?php if ($role == 'teacher'): ?>
     <div class="card shadow-sm mb-4 border-info">
         <div class="card-header bg-info text-dark fw-bold">
-            💡 Thêm nhanh Đề cương ôn tập có sẵn (15 câu cơ bản)
+            💡 Thêm nhanh Đề cương ôn tập có sẵn (15 câu cơ bản) - Dành cho Giáo viên
         </div>
         <div class="card-body bg-white">
             <p class="text-muted mb-3">Bấm vào các nút dưới đây để hệ thống tự động thêm đề cương ôn tập chuẩn vào cơ sở dữ liệu:</p>
@@ -115,6 +132,7 @@ $result = $conn->query($sql);
             <a href="quiz_bank.php?import_sample=hoa" class="btn btn-outline-warning mb-2">➕ Thêm Đề Cương Ôn Tập Hóa (15 câu)</a>
         </div>
     </div>
+    <?php endif; ?>
 
     <!-- Thanh tìm kiếm đề thi -->
     <form method="GET" action="quiz_bank.php" class="row g-3 mb-4">
@@ -164,3 +182,4 @@ $result = $conn->query($sql);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+<?php ob_end_flush(); ?>
