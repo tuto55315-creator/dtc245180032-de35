@@ -53,13 +53,11 @@ if (isset($_GET['import_sample'])) {
     }
 
     if (isset($questions)) {
-        // Tạo đề thi mới
         $stmt_e = $conn->prepare("INSERT INTO exams (title, subject, duration_minutes, shuffle_questions, shuffle_answers) VALUES (?, ?, ?, 1, 1)");
         $stmt_e->bind_param("ssi", $title, $subject, $duration);
         $stmt_e->execute();
         $new_exam_id = $stmt_e->insert_id;
 
-        // Thêm danh sách câu hỏi
         foreach ($questions as $q) {
             $stmt_q = $conn->prepare("INSERT INTO questions (exam_id, question_text, option_a, option_b, option_c, option_d, correct_option) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt_q->bind_param("issssss", $new_exam_id, $q[0], $q[1], $q[2], $q[3], $q[4], $q[5]);
@@ -69,7 +67,6 @@ if (isset($_GET['import_sample'])) {
     }
 }
 
-// Truy vấn danh sách đề thi và đếm lượt làm bài
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $sql = "SELECT e.*, COUNT(r.id) AS total_attempts 
         FROM exams e 
@@ -101,7 +98,7 @@ $result = $conn->query($sql);
     </div>
 
     <?php if ($msg): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="main">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
             <?php echo $msg; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -113,7 +110,7 @@ $result = $conn->query($sql);
             💡 Thêm nhanh Đề cương ôn tập có sẵn (15 câu cơ bản)
         </div>
         <div class="card-body bg-white">
-            <p class="text-muted mb-3">Bạn có thể bấm vào các nút bên dưới để hệ thống tự động tạo một bộ đề cương ôn tập chuẩn gồm 15 câu hỏi cơ bản cho từng môn:</p>
+            <p class="text-muted mb-3">Bấm vào các nút dưới đây để hệ thống tự động thêm đề cương ôn tập chuẩn vào cơ sở dữ liệu:</p>
             <a href="quiz_bank.php?import_sample=toan" class="btn btn-outline-primary me-2 mb-2">➕ Thêm Đề Cương Ôn Tập Toán (15 câu)</a>
             <a href="quiz_bank.php?import_sample=hoa" class="btn btn-outline-warning mb-2">➕ Thêm Đề Cương Ôn Tập Hóa (15 câu)</a>
         </div>
